@@ -154,6 +154,13 @@ const Dashboard = () => {
           </button>
           <button
             className="quick-action-btn"
+            onClick={() => handleQuickAction('transfer')}
+          >
+            <div className="quick-action-icon">💳</div>
+            <div className="quick-action-label">Transfer Money</div>
+          </button>
+          <button
+            className="quick-action-btn"
             onClick={() => handleQuickAction('passbook')}
           >
             <div className="quick-action-icon">📋</div>

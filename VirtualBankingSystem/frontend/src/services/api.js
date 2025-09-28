@@ -55,6 +55,32 @@ export const customerAPI = {
     }
   },
 
+  // Get customer by username - NEW METHOD FOR TRANSFER
+  getByUsername: async (username) => {
+    try {
+      console.log(`API: Getting customer by username: ${username}`);
+      const response = await api.get(`/customers/username/${username}`);
+      console.log('API: Customer by username response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('API: Get customer by username error:', error);
+      
+      // If it's a timeout, try once more with longer timeout
+      if (error.code === 'ECONNABORTED') {
+        console.log('Retrying customer search with longer timeout...');
+        try {
+          const retryResponse = await api.get(`/customers/username/${username}`, { timeout: 15000 });
+          return retryResponse.data;
+        } catch (retryError) {
+          console.log('Customer search retry also failed');
+          throw retryError.response?.data || retryError.message;
+        }
+      }
+      
+      throw error.response?.data || error.message;
+    }
+  },
+
   // Get customer balance
   getBalance: async (customerId) => {
     try {
@@ -112,6 +138,42 @@ export const transactionAPI = {
       });
       return response.data;
     } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Transfer money - NEW METHOD
+  transfer: async (fromCustomerId, toCustomerId, amount, description) => {
+    try {
+      console.log(`API: Transferring ${amount} from customer ${fromCustomerId} to ${toCustomerId}`);
+      const response = await api.post('/transactions/transfer', {
+        fromCustomerId,
+        toCustomerId,
+        amount,
+        description
+      });
+      console.log('API: Transfer response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('API: Transfer error:', error);
+      
+      // If it's a timeout, try once more with longer timeout
+      if (error.code === 'ECONNABORTED') {
+        console.log('Retrying transfer request with longer timeout...');
+        try {
+          const retryResponse = await api.post('/transactions/transfer', {
+            fromCustomerId,
+            toCustomerId,
+            amount,
+            description
+          }, { timeout: 20000 }); // Extra long timeout for critical transfer operation
+          return retryResponse.data;
+        } catch (retryError) {
+          console.log('Transfer retry also failed');
+          throw retryError.response?.data || retryError.message;
+        }
+      }
+      
       throw error.response?.data || error.message;
     }
   },

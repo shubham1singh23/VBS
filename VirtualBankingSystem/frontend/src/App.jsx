@@ -9,6 +9,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import DepositModal from './components/DepositModal';
 import WithdrawModal from './components/WithdrawModal';
+import Transfer from './components/Transfer';
 import Passbook from './components/Passbook';
 
 // Context for user state
@@ -93,6 +94,10 @@ function App() {
                   element={user ? <WithdrawModal /> : <Navigate to="/login" replace />} 
                 />
                 <Route 
+                  path="/transfer" 
+                  element={user ? <Transfer /> : <Navigate to="/login" replace />} 
+                />
+                <Route 
                   path="/passbook" 
                   element={user ? <Passbook /> : <Navigate to="/login" replace />} 
                 />
@@ -118,4 +123,3 @@ function App() {
 }
 
 export default App;
-
